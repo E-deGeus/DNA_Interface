@@ -9,6 +9,7 @@
 using UnityEngine;
 using System.Collections;
 
+
 /**
  * When creating your message listeners you need to implement these two methods:
  *  - OnMessageArrived
@@ -18,50 +19,64 @@ using System.Collections;
 public class SampleMessageListener : MonoBehaviour
 {
     // Adjust the speed for the application.
-    public float speed = 1.0f;
     public int rotEnc;
 
-    public Transform position1, position2, position3, position4, position5;
+    private GameObject targ;
     private Transform camTarget;
+
+
+    void Start()
+    {
+        targ = GameObject.Find("pos0");
+        Transform transformTarget = targ.transform;
+    }
 
     void Update()
     {
-        Debug.Log(rotEnc);
+        //-----------------Debug without plant-------------------
+       /* if (Input.GetMouseButtonUp(0))
+        {
+            rotEnc += 1;
+            if (rotEnc > 23)
+            {
+                rotEnc = 0;
+            }
+            targ = GameObject.Find("pos" + rotEnc.ToString());
+        }
+        if (Input.GetMouseButtonUp(1))
+        {
+            rotEnc -= 1;
+            if (rotEnc < 0)
+            {
+                rotEnc = 23;
+            }
+            targ = GameObject.Find("pos" + rotEnc.ToString());
+        }*/
+    
+        //--------------------------------------------------
 
-        if (rotEnc >= 1 && rotEnc <= 4)
-        {
-            moveCam(position1);
-        }
-        if (rotEnc >= 5 && rotEnc <= 8)
-        {
-            moveCam(position2);
-        }
-        if (rotEnc >= 9 && rotEnc <= 14)
-        {
-            moveCam(position3);
-        }
-        if (rotEnc >= 15 && rotEnc <= 18)
-        {
-            moveCam(position4);
-        }
-        if (rotEnc >= 19 && rotEnc <= 24)
-        {
-            moveCam(position5);
-        }
+        Debug.Log("Rotary Encoder: " + targ);
+
+        Transform transformTarget = targ.transform;
+        moveCam(transformTarget);
     }
 
     void moveCam(Transform camTarget)
     {
-        float step = speed * Time.deltaTime; // calculate distance to move
-        transform.position = Vector3.MoveTowards(transform.position, camTarget.position, speed * Time.deltaTime);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, camTarget.rotation, 10);
+        transform.position = Vector3.MoveTowards(transform.position, camTarget.position, 10);
     }
 
+   
 
     // Invoked when a line of data is received from the serial device.
     void OnMessageArrived(string msg)
     {
         Debug.Log("Message arrived: " + msg);
         int.TryParse(msg, out rotEnc);
+
+        int rotMap = rotEnc -= 1;
+        targ = GameObject.Find("pos" + rotMap.ToString());
     }
 
     // Invoked when a connect/disconnect event occurs. The parameter 'success'
