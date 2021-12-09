@@ -7,6 +7,7 @@
  */
 
 using UnityEngine;
+using UnityEngine.UI;
 using System.Threading;
 
 /**
@@ -26,7 +27,9 @@ using System.Threading;
 public class SerialController : MonoBehaviour
 {
     [Tooltip("Port name with which the SerialPort object will be created.")]
-    public string portName = "COM3";
+    public Text pickPort;
+
+    //public string portName = "COM3";
 
     [Tooltip("Baud rate that the serial device is using to transmit data.")]
     public int baudRate = 9600;
@@ -63,7 +66,7 @@ public class SerialController : MonoBehaviour
     // ------------------------------------------------------------------------
     void OnEnable()
     {
-        serialThread = new SerialThreadLines(portName, 
+        serialThread = new SerialThreadLines("COM" + pickPort.text.ToString(), 
                                              baudRate, 
                                              reconnectionDelay,
                                              maxUnreadMessages);
@@ -111,7 +114,7 @@ public class SerialController : MonoBehaviour
         // via SendMessage, then the message listener should be null.
         if (messageListener == null)
             return;
-
+        
         // Read the next message from the queue
         string message = (string)serialThread.ReadMessage();
         if (message == null)

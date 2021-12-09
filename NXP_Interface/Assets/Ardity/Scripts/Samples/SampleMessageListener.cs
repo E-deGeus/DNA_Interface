@@ -7,6 +7,7 @@
  */
 
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 
@@ -24,6 +25,9 @@ public class SampleMessageListener : MonoBehaviour
     private GameObject targ;
     private Transform camTarget;
 
+    public GameObject ArduinoRead;
+    public Text state;
+
 
     void Start()
     {
@@ -33,30 +37,6 @@ public class SampleMessageListener : MonoBehaviour
 
     void Update()
     {
-        //-----------------Debug without plant-------------------
-       /* if (Input.GetMouseButtonUp(0))
-        {
-            rotEnc += 1;
-            if (rotEnc > 23)
-            {
-                rotEnc = 0;
-            }
-            targ = GameObject.Find("pos" + rotEnc.ToString());
-        }
-        if (Input.GetMouseButtonUp(1))
-        {
-            rotEnc -= 1;
-            if (rotEnc < 0)
-            {
-                rotEnc = 23;
-            }
-            targ = GameObject.Find("pos" + rotEnc.ToString());
-        }*/
-    
-        //--------------------------------------------------
-
-        Debug.Log("Rotary Encoder: " + targ);
-
         Transform transformTarget = targ.transform;
         moveCam(transformTarget);
     }
@@ -85,8 +65,32 @@ public class SampleMessageListener : MonoBehaviour
     void OnConnectionEvent(bool success)
     {
         if (success)
-            Debug.Log("Connection established");
+            gotConection();
         else
-            Debug.Log("Connection attempt failed or disconnection detected");
+            failedConnection();
     }
+
+    public void gotConection()
+    {
+        Debug.Log("Connection established");
+        state.text = "Connection established";
+        state.color = Color.green;
+    }
+
+    public void failedConnection()
+    {
+        Debug.Log("Connection attempt failed or disconnection detected");
+        state.text = "Connection attempt failed";
+        state.color = Color.red;
+        ArduinoRead.SetActive(false);
+    }
+
+    public void disconnected()
+    {
+        Debug.Log("disconnected");
+        state.text = "Disconnected";
+        state.color = Color.red;
+        ArduinoRead.SetActive(false);
+    }
+
 }
